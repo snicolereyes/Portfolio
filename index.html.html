@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nicole Reyes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Outfit:wght@200;300;400&family=Playfair+Display:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --iris: #b090c0;
+            --iris-deep: #8060a0;
+            --pearl: #f8f4f0;
+            --rose-irid: #e8c0c8;
+            --aqua-irid: #c0d8e0;
+            --gold-irid: #e8d8b0;
+            --mint-irid: #c0e0d0;
+            --ink: #3a2e38;
+            --ink-soft: #2a2030;
+            --glass: rgba(255,255,255,0.35);
+            --glass-border: rgba(255,255,255,0.6);
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f5f0ec;
+            color: var(--ink);
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* ── CANVAS IRIDISCENTE GLOBAL ── */
+        #irid-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.75;
+        }
+
+        /* ── CURSOR ── */
+        .cursor {
+            position: fixed;
+            width: 6px; height: 6px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%,-50%);
+            mix-blend-mode: difference;
+            transition: width .3s, height .3s;
+        }
+        .cursor-ring {
+            position: fixed;
+            width: 36px; height: 36px;
+            border: 1px solid rgba(200,168,232,0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%,-50%);
+            transition: width .4s, height .4s, opacity .3s;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            z-index: 200;
+            padding: 1.8rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to bottom, rgba(245,240,236,0.85), transparent);
+            backdrop-filter: blur(0px);
+        }
+        .nav-name {
+            font-family: 'Syncopate', sans-serif;
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.25em;
+            color: var(--ink);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        .nav-links { display: flex; gap: 3rem; list-style: none; }
+        .nav-links a {
+            font-size: 0.6rem; font-weight: 300;
+            letter-spacing: 0.25em; text-transform: uppercase;
+            color: rgba(58,46,56,0.45);
+            text-decoration: none;
+            transition: color .3s;
+        }
+        .nav-links a:hover { color: var(--iris); }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: flex-start;
+            padding: 0 3rem;
+            position: relative; overflow: hidden;
+            background: linear-gradient(160deg, #f8f3ee 0%, #f2ece8 40%, #ede8f0 70%, #f0ece8 100%);
+        }
+
+        /* Orbes iridiscentes hero */
+        .hero-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+        .orb-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(200,168,210,0.35), transparent 70%);
+            top: -100px; right: -100px;
+            animation: orbFloat1 8s ease-in-out infinite;
+        }
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(192,216,224,0.3), transparent 70%);
+            bottom: 0; left: 10%;
+            animation: orbFloat2 10s ease-in-out infinite;
+        }
+        .orb-3 {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(232,216,176,0.3), transparent 70%);
+            top: 40%; left: 40%;
+            animation: orbFloat3 7s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px, 40px) scale(1.1); } }
+        @keyframes orbFloat2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(40px,-30px) scale(0.9); } }
+        @keyframes orbFloat3 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(20px,-20px); } 66% { transform: translate(-15px, 25px); } }
+
+        .hero-content { position: relative; z-index: 2; }
+        .hero-label {
+            font-size: 0.6rem; letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--iris); margin-bottom: 2rem;
+            display: flex; align-items: center; gap: 1rem;
+            opacity: 0; animation: fadeUp 1s 0.3s forwards;
+        }
+        .hero-label::before {
+            content: ''; display: block;
+            width: 30px; height: 1px;
+            background: linear-gradient(to right, var(--iris), transparent);
+        }
+
+        .hero-name {
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(3rem, 9vw, 8.5rem);
+            font-weight: 700;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #8a7090 0%, #b090b8 20%, #c0a0b0 40%, #a0b8c0 60%, #c0b080 80%, #9080a0 100% );
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeUp 1s 0.5s forwards, iridShift 6s ease infinite;
+            opacity: 0;
+        }
+
+        @keyframes iridShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+        .hero-sub {
+            margin-top: 2.5rem;
+            font-size: 0.75rem; font-weight: 200;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: rgba(58,46,56,0.45);
+            line-height: 2.2;
+            opacity: 0; animation: fadeUp 1s 0.8s forwards;
+        }
+
+        .hero-scroll {
+            position: absolute; bottom: 3rem; right: 3rem;
+            display: flex; flex-direction: column;
+            align-items: center; gap: 0.75rem;
+            font-size: 0.55rem; letter-spacing: 0.3em;
+            text-transform: uppercase; color: rgba(58,46,56,0.3);
+            opacity: 0; animation: fadeIn 2s 1.5s forwards;
+        }
+        .scroll-line {
+            width: 1px; height: 60px;
+            background: linear-gradient(to bottom, var(--iris), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        @keyframes scrollPulse { 0%,100% { opacity: 0.3; transform: scaleY(1); } 50% { opacity: 1; transform: scaleY(1.2); } }
+
+        /* ── GLASS DIVIDER ── */
+        .glass-divider { position: relative; height: 180px; overflow: hidden; }
+        .glass-divider::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(200,168,232,0.04) 50%, transparent 100% );
+            backdrop-filter: blur(20px);
+        }
+        .glass-divider-inner {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .divider-line {
+            width: 60%; height: 1px;
+            background: linear-gradient(to right, transparent, rgba(200,168,232,0.3), rgba(240,168,200,0.3), rgba(168,216,240,0.3), transparent );
+        }
+
+        /* ── PROJECT SECTIONS ── */
+        .project-section { position: relative; padding: 8rem 3rem; overflow: hidden; }
+
+        .nacar-bg { background: linear-gradient(160deg, #f5f0ec 0%, #f0eaf0 50%, #ece8f0 100%); }
+        .delmar-bg { background: linear-gradient(145deg, #eff4f5 0%, #eaf0f5 50%, #f5f0ea 100%); }
+        .chaquetas-bg { background: linear-gradient(135deg, #f2eff5 0%, #f0eaf2 50%, #f5f0ee 100%); }
+
+        /* ── PROJECT HEADER ── */
+        .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5rem; position: relative; z-index: 2; }
+        .project-num { font-family: 'Syncopate', sans-serif; font-size: 0.55rem; letter-spacing: 0.4em; color: var(--iris); opacity: 0.6; margin-bottom: 1rem; display: block; }
+        .project-title { font-family: 'Syncopate', sans-serif; font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 700; letter-spacing: 0.05em; background: linear-gradient(135deg, #6a5070 0%, #9070a0 40%, #b090a8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+        .project-subtitle { font-size: 0.65rem; font-weight: 200; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(58,46,56,0.4); margin-top: 1rem; display: block; }
+        .roles-wrap { text-align: right; }
+        .roles-label { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(160,128,180,0.5); margin-bottom: 1rem; display: block; }
+        .role-chip { display: inline-block; font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; background: rgba(180,150,200,0.1); border: 1px solid rgba(180,150,200,0.25); color: rgba(100,70,110,0.7); padding: 0.3rem 0.8rem; margin: 0.2rem; border-radius: 2px; }
+
+        /* ── GRIDS ── */
+        .grid-nacar { display: grid; grid-template-columns: 1.5fr 0.5fr; grid-template-rows: 1fr 1fr; gap: 0.75rem; height: 620px; position: relative; z-index: 2; }
+        .n-main { grid-row: 1/3; }
+        .grid-delmar { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0.75rem; height: 600px; position: relative; z-index: 2; }
+        .d-main { grid-row: 1/3; }
+        .grid-concurvas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; height: 560px; position: relative; z-index: 2; }
+
+        /* ── IMAGE SLOTS ── */
+        .img-slot { position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(200,175,215,0.12), rgba(192,210,224,0.1)); border: 1px solid rgba(180,150,200,0.2); }
+        .img-slot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .7s cubic-bezier(.25,.46,.45,.94); }
+        .img-slot:hover img { transform: scale(1.05); }
+        .slot-inner { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: rgba(100,80,110,0.35); }
+        .slot-icon { width: 40px; height: 40px; border: 1px solid rgba(160,130,180,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .slot-label { font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; text-align: center; line-height: 1.8; }
+
+        /* ── DESC ── */
+        .project-desc { margin-top: 4rem; display: grid; grid-template-columns: 200px 1fr; gap: 4rem; align-items: start; position: relative; z-index: 2; }
+        .desc-label { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--iris); opacity: 0.7; }
+        .irid-line { width: 100%; height: 1px; margin-top: 1rem; background: linear-gradient(to right, var(--iris), var(--rose-irid), var(--aqua-irid), transparent ); opacity: 0.5; }
+        .desc-text { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic; font-weight: 300; line-height: 1.9; color: rgba(58,46,56,0.65); }
+
+        /* ── ABOUT (Updated to Light Theme) ── */
+        .about-section { padding: 10rem 3rem; position: relative; overflow: hidden; background: #f5f0ec; }
+        .about-card {
+            position: relative; z-index: 2;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(180,150,200,0.2);
+            backdrop-filter: blur(30px);
+            padding: 5rem;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 6rem; align-items: start;
+            border-radius: 4px;
+        }
+        .about-eyebrow { font-family: 'Syncopate', sans-serif; font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--iris); margin-bottom: 2rem; display: block; opacity: 0.7; }
+        .about-title { font-family: 'Syncopate', sans-serif; font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 700; line-height: 1.2; background: linear-gradient(135deg, var(--ink), var(--iris-deep)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 2.5rem; }
+        .about-text { font-size: 0.9rem; font-weight: 300; line-height: 2.2; color: var(--ink); opacity: 0.8; margin-bottom: 3rem; }
+        .skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .skill-tag { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; background: rgba(200,168,232,0.1); border: 1px solid rgba(200,168,232,0.2); color: var(--iris-deep); padding: 0.4rem 0.9rem; }
+        .contact-cta { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-style: italic; font-weight: 300; color: var(--ink); margin-bottom: 2.5rem; }
+        .contact-email { font-family: 'Syncopate', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--iris); padding-bottom: 0.5rem; }
+        .contact-note { margin-top: 2.5rem; font-size: 0.7rem; font-weight: 200; line-height: 2; color: rgba(58,46,56,0.5); }
+
+        footer { padding: 2.5rem 3rem; border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; background: #fdfbf9; }
+        .footer-name { font-family: 'Syncopate', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; color: rgba(58,46,56,0.3); }
+        .footer-note { font-size: 0.55rem; letter-spacing: 0.2em; color: rgba(58,46,56,0.2); }
+
+        /* ANIMATIONS */
+        .reveal { opacity: 0; transform: translateY(35px); transition: opacity .9s ease, transform .9s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .about-card { grid-template-columns: 1fr; padding: 2.5rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="irid-canvas"></canvas>
+<div class="cursor" id="cursor"></div><div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="#" class="nav-name">Nicole Reyes</a>
+  <ul class="nav-links">
+    <li><a href="#nacar">Nácar</a></li>
+    <li><a href="#delmar">Del Mar</a></li>
+    <li><a href="#concurvas">Concurvas</a></li>
+    <li><a href="#sobre-mi">Sobre mí</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-orb orb-1"></div><div class="hero-orb orb-2"></div><div class="hero-orb orb-3"></div>
+  <div class="hero-content">
+    <span class="hero-label">Portafolio</span>
+    <h1 class="hero-name">Nicole<br>Reyes</h1>
+    <p class="hero-sub">
+      Dirección Creativa &nbsp;·&nbsp; Desarrollo Textil<br>
+      Estilismo &nbsp;·&nbsp; Diseño Visual &nbsp;·&nbsp; Desfiles
+    </p>
+  </div>
+  <div class="hero-scroll"><div class="scroll-line"></div>Scroll</div>
+</section>
+
+<div class="glass-divider"><div class="glass-divider-inner"><div class="divider-line"></div></div></div>
+
+<!-- ── NÁCAR ── -->
+<section class="project-section nacar-bg" id="nacar">
+  <div class="project-header reveal">
+    <div>
+      <span class="project-num">01 / 03</span>
+      <h2 class="project-title">Nácar</h2>
+      <span class="project-subtitle">Colección · Inspiración Marina</span>
+    </div>
+    <div class="roles-wrap">
+      <span class="roles-label">Rol en el proyecto</span>
+      <span class="role-chip">Dirección Creativa</span>
+      <span class="role-chip">Estilismo</span>
+      <span class="role-chip">Cartas de Color</span>
+      <span class="role-chip">Coordinación Desfile</span>
+    </div>
+  </div>
+ <!-- SECCIÓN NÁCAR - CORRECCIÓN FINAL PNG -->
+    <div class="grid-nacar reveal">
+      <!-- Foto Grande -->
+      <div class="img-slot n-main">
+        <img src="looks nacar.png" alt="Colección Nácar - Modelos">
+      </div>
+
+      <!-- Foto Pequeña Arriba -->
+      <div class="img-slot n-2">
+        <img src="principal nacar.png" alt="Presentación Nácar">
+        <div class="slot-inner">
+          <div class="slot-label">Lanzamiento <br> Digital</div>
+        </div>
+      </div>
+
+      <!-- Foto Pequeña Abajo (La que ya funcionaba) -->
+      <div class="img-slot n-3">
+        <img src="decoracion nacar.jpeg" alt="Exposición Nácar">
+        <div class="slot-inner">
+          <div class="slot-label">Muestra <br> Editorial</div>
+        </div>
+      </div>
+    </div>
+
+      
+  
+
+  <div class="project-desc reveal">
+    <div class="desc-label-wrap"><span class="desc-label">Sobre el proyecto</span><div class="irid-line"></div></div>
+    <p class="desc-text">Colección inspirada en la iridiscencia del nácar y lo marino. Dirección creativa integral: selección de telas, confección de prendas, moodboards de tendencia y decoración del espacio.</p>
+  </div>
+</section>
+
+<!-- ── DEL MAR ── -->
+<section class="project-section delmar-bg" id="delmar">
+  <div class="project-header reveal">
+    <div>
+      <span class="project-num">02 / 03</span>
+      <h2 class="project-title" style="background: linear-gradient(135deg, #6a8090, #a8d8f0); -webkit-background-clip: text; background-clip: text;">Del Mar</h2>
+      <span class="project-subtitle">Colección · Verano Tropical</span>
+    </div>
+    <div class="roles-wrap">
+      <span class="roles-label">Rol en el proyecto</span>
+      <span class="role-chip">Selección de Telas</span>
+      <span class="role-chip">Estilismo</span>
+      <span class="role-chip">Diseño de Espacio</span>
+    </div>
+  </div>
+<!-- SECCIÓN DEL MAR -->
+    <div class="grid-delmar reveal">
+      <!-- Foto Grande (Looks) -->
+      <div class="img-slot d-main">
+        <img src="looks del mar.jpeg" alt="Colección Del Mar - Estilismo">
+      </div>
+
+      <!-- Foto Pequeña 1 (Decoración con nombre 1) -->
+      <div class="img-slot d-2">
+        <img src="decoracion del mar 1.png" alt="Detalle Del Mar 1">
+        <div class="slot-inner">
+          <div class="slot-label">Inspiración <br> Marina</div>
+        </div>
+      </div>
+
+      <!-- Foto Pequeña 2 (Decoración general) -->
+      <div class="img-slot d-3">
+        <img src="decoracion del mar.jpeg" alt="Detalle Del Mar 2">
+        <div class="slot-inner">
+          <div class="slot-label">Texturas <br> y Color</div>
+        </div>
+      </div>
+    </div>
+ <div class="project-desc reveal">
+    <div class="desc-label-wrap"><span class="desc-label">Sobre el proyecto</span><div class="irid-line"></div></div>
+    <p class="desc-text">Colección de verano con paleta tropical: azules, coral y amarillo sol. Segundo desfile 
+        de temporada — desde la selección de telas y estilismo de los looks hasta el diseño 
+        de la ambientación completa del espacio y la coordinación con equipos de confección y logística.</p>
+  </div>
+
+</section>
+
+<!-- ── CONCURVAS ── -->
+<section class="project-section chaquetas-bg" id="concurvas">
+  <div class="project-header reveal">
+    <div>
+      <span class="project-num">03 / 03</span>
+      <h2 class="project-title" style="background: linear-gradient(135deg, #906a80, #f0a8c8); -webkit-background-clip: text; background-clip: text;">Concurvas</h2>
+      <span class="project-subtitle">Desarrollo de Producto · Diseño de Prendas</span>
+    </div>
+    <div class="roles-wrap">
+      <span class="roles-label">Rol en el proyecto</span>
+      <span class="role-chip">Diseño de Prendas</span>
+      <span class="role-chip">Fichas Técnicas</span>
+      <span class="role-chip">Desarrollo de Muestras</span>
+    </div>
+  </div>
+
+ <!-- SECCIÓN CONCURVAS -->
+    <div class="grid-concurvas reveal">
+      <!-- Foto Grande -->
+      <div class="img-slot c-main">
+        <img src="concurvas 1.png" alt="Proyecto Concurvas - Principal">
+      </div>
+
+      <!-- Foto Pequeña 1 -->
+      <div class="img-slot c-2">
+        <img src="concurvas 2.png" alt="Proyecto Concurvas - Detalle 1">
+        <div class="slot-inner">
+          <div class="slot-label">UX / UI <br> Design</div>
+        </div>
+      </div>
+
+      <!-- Foto Pequeña 2 -->
+      <div class="img-slot c-3">
+        <img src="concurvas 3.png" alt="Proyecto Concurvas - Detalle 2">
+        <div class="slot-inner">
+          <div class="slot-label">Digital <br> Experience</div>
+        </div>
+      </div>
+    </div>
+ <div class="project-desc reveal">
+    <div class="desc-label-wrap"><span class="desc-label">Sobre el proyecto</span><div class="irid-line"></div></div>
+    <p class="desc-text">Desarrollo integral de colección de chaquetería: diseño de prendas, creación de muestras 
+        físicas, fichas técnicas y dirección visual de campaña fotográfica. Trabajo coordinado 
+        con producción y confección desde boceto hasta producto final.</p>
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="sobre-mi">
+  <div class="about-card reveal">
+    <div>
+      <span class="about-eyebrow">Sobre mí</span>
+      <h2 class="about-title">Intuitiva y auténtica</h2>
+      <p class="about-text">
+        Soy una diseñadora guiada por la intuición, la estética y las emociones. Desde siempre me ha llamado más la atención lo que una prenda transmite que la prenda en sí: cómo hace sentir a alguien, cómo puede cambiar su energía o su forma de habitar un espacio.<br><br>
+        Mi forma de ver la moda nace de observar a las personas reales. Me interesa lo que pasa en lo cotidiano, en lo simple, en lo que no está pensado para verse perfecto pero igual se siente auténtico. Por eso, no conecto con una moda lejana o inalcanzable, sino con una que se siente cercana, honesta y coherente con quien la usa.
+      </p>
+      <div class="skills-grid">
+        <span class="skill-tag">Dirección Creativa</span>
+        <span class="skill-tag">Desarrollo Textil</span>
+        <span class="skill-tag">Estilismo</span>
+        <span class="skill-tag">Diseño Visual</span>
+      </div>
+    </div>
+    <div>
+      <span class="contact-eyebrow">Contacto</span>
+      <p class="contact-cta">¿Tienes un proyecto en mente?</p>
+      <a href="mailto:snicolereyes24@gmail.com" class="contact-email">snicolereyes24@gmail.com</a>
+      <p class="contact-note">
+        Escríbeme para conversar sobre posibles colaboraciones o para conocer más sobre mi.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-name">Nicole Reyes</span>
+  <span class="footer-note">Bogotá, Colombia</span>
+</footer>
+
+<script>
+// (El resto del script de canvas y cursor se mantiene igual)
+const canvas = document.getElementById('irid-canvas');const ctx = canvas.getContext('2d');let W, H, t = 0;
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+const blobs = [
+  { x: 0.7, y: 0.2, r: 0.4, c1: [200,168,232], c2: [240,168,200], speed: 0.0008 },
+  { x: 0.2, y: 0.7, r: 0.35, c1: [168,216,240], c2: [168,240,210], speed: 0.0012 },
+  { x: 0.5, y: 0.5, r: 0.25, c1: [240,216,168], c2: [200,168,232], speed: 0.0006 },
+];
+function drawFrame() {
+  ctx.clearRect(0, 0, W, H); t += 1;
+  blobs.forEach((b, i) => {
+    const ox = Math.sin(t * b.speed * 1000 + i * 1.5) * 0.08;
+    const oy = Math.cos(t * b.speed * 1000 + i * 2.1) * 0.06;
+    const cx = (b.x + ox) * W; const cy = (b.y + oy) * H;
+    const r = b.r * Math.min(W, H);
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    const alpha = 0.12;
+    grad.addColorStop(0, `rgba(${b.c1.join(',')},${alpha})`);
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  });
+  requestAnimationFrame(drawFrame);
+}
+drawFrame();
+
+const cursor = document.getElementById('cursor'); const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+function animRing() { rx += (mx - rx) * 0.1; ry += (my - ry) * 0.1; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animRing); }
+animRing();
+
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+reveals.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
