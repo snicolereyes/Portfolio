@@ -1,285 +1,503 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nicole Reyes</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Outfit:wght@200;300;400&family=Playfair+Display:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-            --iris: #b090c0;
-            --iris-deep: #8060a0;
-            --pearl: #f8f4f0;
-            --rose-irid: #e8c0c8;
-            --aqua-irid: #c0d8e0;
-            --gold-irid: #e8d8b0;
-            --mint-irid: #c0e0d0;
-            --ink: #3a2e38;
-            --ink-soft: #2a2030;
-            --glass: rgba(255,255,255,0.35);
-            --glass-border: rgba(255,255,255,0.6);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nicole Reyes</title>
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Outfit:wght@200;300;400&family=Playfair+Display:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: #f5f0ec;
-            color: var(--ink);
-            overflow-x: hidden;
-            cursor: none;
-        }
+:root {
+  --iris: #b090c0;
+  --iris-deep: #8060a0;
+  --pearl: #f8f4f0;
+  --rose-irid: #e8c0c8;
+  --aqua-irid: #c0d8e0;
+  --gold-irid: #e8d8b0;
+  --ink: #3a2e38;
+  --glass: rgba(255,255,255,0.35);
+  --glass-border: rgba(255,255,255,0.6);
+}
 
-        /* ── CANVAS IRIDISCENTE GLOBAL ── */
-        #irid-canvas {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.75;
-        }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f5f0ec;
+  color: var(--ink);
+  overflow-x: hidden;
+  cursor: none;
+}
 
-        /* ── CURSOR ── */
-        .cursor {
-            position: fixed;
-            width: 6px; height: 6px;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%,-50%);
-            mix-blend-mode: difference;
-            transition: width .3s, height .3s;
-        }
-        .cursor-ring {
-            position: fixed;
-            width: 36px; height: 36px;
-            border: 1px solid rgba(200,168,232,0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            transform: translate(-50%,-50%);
-            transition: width .4s, height .4s, opacity .3s;
-        }
+/* ── CANVAS IRIDISCENTE GLOBAL ── */
+#irid-canvas {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none; opacity: 0.6;
+}
 
-        /* ── NAV ── */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0;
-            z-index: 200;
-            padding: 1.8rem 3rem;
-            display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(to bottom, rgba(245,240,236,0.85), transparent);
-            backdrop-filter: blur(0px);
-        }
-        .nav-name {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 0.7rem; font-weight: 700;
-            letter-spacing: 0.25em;
-            color: var(--ink);
-            text-decoration: none;
-            text-transform: uppercase;
-        }
-        .nav-links { display: flex; gap: 3rem; list-style: none; }
-        .nav-links a {
-            font-size: 0.6rem; font-weight: 300;
-            letter-spacing: 0.25em; text-transform: uppercase;
-            color: rgba(58,46,56,0.45);
-            text-decoration: none;
-            transition: color .3s;
-        }
-        .nav-links a:hover { color: var(--iris); }
+/* ── CURSOR PERSONALIZADO ── */
+.cursor {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--iris); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .25s, height .25s, background .25s;
+  mix-blend-mode: multiply;
+}
+.cursor-ring {
+  position: fixed; width: 38px; height: 38px;
+  border: 1px solid rgba(176,144,192,0.4);
+  border-radius: 50%; pointer-events: none;
+  z-index: 9998; transform: translate(-50%,-50%);
+  transition: width .4s, height .4s;
+}
+.cursor.hovering { width: 20px; height: 20px; background: var(--rose-irid); }
+.cursor-ring.hovering { width: 56px; height: 56px; border-color: rgba(176,144,192,0.7); }
 
-        /* ── HERO ── */
-        .hero {
-            min-height: 100vh;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: flex-start;
-            padding: 0 3rem;
-            position: relative; overflow: hidden;
-            background: linear-gradient(160deg, #f8f3ee 0%, #f2ece8 40%, #ede8f0 70%, #f0ece8 100%);
-        }
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 1.6rem 3rem;
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(to bottom, rgba(245,240,236,0.92), transparent);
+  backdrop-filter: blur(8px);
+}
+.nav-name {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--ink); text-decoration: none;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 0.58rem; font-weight: 300; letter-spacing: 0.25em;
+  text-transform: uppercase; color: rgba(58,46,56,0.45);
+  text-decoration: none; transition: color .3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
+  height: 1px; background: var(--iris);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s;
+}
+.nav-links a:hover { color: var(--iris); }
+.nav-links a:hover::after { transform: scaleX(1); }
 
-        /* Orbes iridiscentes hero */
-        .hero-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            pointer-events: none;
-        }
-        .orb-1 {
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(200,168,210,0.35), transparent 70%);
-            top: -100px; right: -100px;
-            animation: orbFloat1 8s ease-in-out infinite;
-        }
-        .orb-2 {
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(192,216,224,0.3), transparent 70%);
-            bottom: 0; left: 10%;
-            animation: orbFloat2 10s ease-in-out infinite;
-        }
-        .orb-3 {
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(232,216,176,0.3), transparent 70%);
-            top: 40%; left: 40%;
-            animation: orbFloat3 7s ease-in-out infinite;
-        }
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: flex-start;
+  padding: 0 3rem 6rem;
+  position: relative; overflow: hidden;
+  background: linear-gradient(160deg, #f8f3ee 0%, #f2ece8 40%, #ede8f0 70%, #f0ece8 100%);
+}
+.hero-orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px); pointer-events: none;
+}
+.orb-1 { width: 650px; height: 650px; background: radial-gradient(circle, rgba(200,168,210,0.4), transparent 70%); top: -150px; right: -100px; animation: orbFloat1 9s ease-in-out infinite; }
+.orb-2 { width: 450px; height: 450px; background: radial-gradient(circle, rgba(192,216,224,0.35), transparent 70%); bottom: 50px; left: 5%; animation: orbFloat2 11s ease-in-out infinite; }
+.orb-3 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(232,216,176,0.3), transparent 70%); top: 35%; left: 38%; animation: orbFloat3 7s ease-in-out infinite; }
 
-        @keyframes orbFloat1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px, 40px) scale(1.1); } }
-        @keyframes orbFloat2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(40px,-30px) scale(0.9); } }
-        @keyframes orbFloat3 { 0%,100% { transform: translate(0,0); } 33% { transform: translate(20px,-20px); } 66% { transform: translate(-15px, 25px); } }
+@keyframes orbFloat1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-30px,40px) scale(1.1)} }
+@keyframes orbFloat2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-30px) scale(0.9)} }
+@keyframes orbFloat3 { 0%,100%{transform:translate(0,0)} 33%{transform:translate(20px,-20px)} 66%{transform:translate(-15px,25px)} }
 
-        .hero-content { position: relative; z-index: 2; }
-        .hero-label {
-            font-size: 0.6rem; letter-spacing: 0.4em;
-            text-transform: uppercase;
-            color: var(--iris); margin-bottom: 2rem;
-            display: flex; align-items: center; gap: 1rem;
-            opacity: 0; animation: fadeUp 1s 0.3s forwards;
-        }
-        .hero-label::before {
-            content: ''; display: block;
-            width: 30px; height: 1px;
-            background: linear-gradient(to right, var(--iris), transparent);
-        }
+.hero-content { position: relative; z-index: 2; }
+.hero-label {
+  font-size: 0.58rem; letter-spacing: 0.45em; text-transform: uppercase;
+  color: var(--iris); margin-bottom: 2rem;
+  display: flex; align-items: center; gap: 1rem;
+  opacity: 0; animation: fadeUp 1s 0.3s forwards;
+}
+.hero-label::before {
+  content: ''; width: 30px; height: 1px;
+  background: linear-gradient(to right, var(--iris), transparent);
+}
+.hero-name {
+  font-family: 'Syncopate', sans-serif;
+  font-size: clamp(3.5rem, 10vw, 9.5rem);
+  font-weight: 700; line-height: 0.9; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #8a7090 0%, #b090b8 20%, #c0a8b8 35%, #a8c0c8 50%, #c0b888 65%, #b890c0 80%, #9080a8 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: fadeUp 1s 0.5s forwards, iridShift 5s ease infinite;
+  opacity: 0;
+}
+@keyframes iridShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
 
-        .hero-name {
-            font-family: 'Syncopate', sans-serif;
-            font-size: clamp(3rem, 9vw, 8.5rem);
-            font-weight: 700;
-            line-height: 0.95;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #8a7090 0%, #b090b8 20%, #c0a0b0 40%, #a0b8c0 60%, #c0b080 80%, #9080a0 100% );
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: fadeUp 1s 0.5s forwards, iridShift 6s ease infinite;
-            opacity: 0;
-        }
+.hero-sub {
+  margin-top: 2.5rem;
+  font-size: 0.72rem; font-weight: 200; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(58,46,56,0.42); line-height: 2.4;
+  opacity: 0; animation: fadeUp 1s 0.8s forwards;
+}
 
-        @keyframes iridShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+/* placeholder */
 
-        .hero-sub {
-            margin-top: 2.5rem;
-            font-size: 0.75rem; font-weight: 200;
-            letter-spacing: 0.2em; text-transform: uppercase;
-            color: rgba(58,46,56,0.45);
-            line-height: 2.2;
-            opacity: 0; animation: fadeUp 1s 0.8s forwards;
-        }
+.hero-scroll {
+  position: absolute; bottom: 2.5rem; left: 3rem;
+  display: flex; align-items: center; gap: 1rem;
+  font-size: 0.52rem; letter-spacing: 0.35em;
+  text-transform: uppercase; color: rgba(58,46,56,0.3);
+  opacity: 0; animation: fadeIn 2s 1.5s forwards;
+}
+.scroll-line {
+  width: 50px; height: 1px;
+  background: linear-gradient(to right, var(--iris), transparent);
+  animation: scrollPulse 2.5s ease-in-out infinite;
+}
+@keyframes scrollPulse { 0%,100%{opacity:0.3;transform:scaleX(1)} 50%{opacity:1;transform:scaleX(1.3)} }
 
-        .hero-scroll {
-            position: absolute; bottom: 3rem; right: 3rem;
-            display: flex; flex-direction: column;
-            align-items: center; gap: 0.75rem;
-            font-size: 0.55rem; letter-spacing: 0.3em;
-            text-transform: uppercase; color: rgba(58,46,56,0.3);
-            opacity: 0; animation: fadeIn 2s 1.5s forwards;
-        }
-        .scroll-line {
-            width: 1px; height: 60px;
-            background: linear-gradient(to bottom, var(--iris), transparent);
-            animation: scrollPulse 2s ease-in-out infinite;
-        }
-        @keyframes scrollPulse { 0%,100% { opacity: 0.3; transform: scaleY(1); } 50% { opacity: 1; transform: scaleY(1.2); } }
+/* ── DIVIDER ── */
+.glass-divider { position: relative; height: 120px; overflow: hidden; }
+.glass-divider-inner {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.divider-line {
+  width: 70%; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(200,168,232,0.4), rgba(240,168,200,0.3), rgba(168,216,240,0.4), transparent);
+  animation: dividerShift 4s ease-in-out infinite;
+}
+@keyframes dividerShift {
+  0%,100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
 
-        /* ── GLASS DIVIDER ── */
-        .glass-divider { position: relative; height: 180px; overflow: hidden; }
-        .glass-divider::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(to bottom, transparent 0%, rgba(200,168,232,0.04) 50%, transparent 100% );
-            backdrop-filter: blur(20px);
-        }
-        .glass-divider-inner {
-            position: absolute; inset: 0;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .divider-line {
-            width: 60%; height: 1px;
-            background: linear-gradient(to right, transparent, rgba(200,168,232,0.3), rgba(240,168,200,0.3), rgba(168,216,240,0.3), transparent );
-        }
+/* ── PROJECT SECTIONS ── */
+.project-section { position: relative; padding: 7rem 3rem 8rem; overflow: hidden; }
 
-        /* ── PROJECT SECTIONS ── */
-        .project-section { position: relative; padding: 8rem 3rem; overflow: hidden; }
+.nacar-bg { background: linear-gradient(160deg, #f5f0ec 0%, #f0eaf0 60%, #ece8f0 100%); }
+.nacar-bg::before { content:''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse at 90% 10%, rgba(220,190,210,0.18) 0%, transparent 50%), radial-gradient(ellipse at 10% 90%, rgba(192,210,224,0.12) 0%, transparent 45%); }
 
-        .nacar-bg { background: linear-gradient(160deg, #f5f0ec 0%, #f0eaf0 50%, #ece8f0 100%); }
-        .delmar-bg { background: linear-gradient(145deg, #eff4f5 0%, #eaf0f5 50%, #f5f0ea 100%); }
-        .chaquetas-bg { background: linear-gradient(135deg, #f2eff5 0%, #f0eaf2 50%, #f5f0ee 100%); }
+.delmar-bg { background: linear-gradient(145deg, #eff4f5 0%, #eaf0f5 55%, #f5f0ea 100%); }
+.delmar-bg::before { content:''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse at 15% 20%, rgba(192,216,224,0.2) 0%, transparent 50%), radial-gradient(ellipse at 85% 80%, rgba(232,216,176,0.15) 0%, transparent 45%); }
 
-        /* ── PROJECT HEADER ── */
-        .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5rem; position: relative; z-index: 2; }
-        .project-num { font-family: 'Syncopate', sans-serif; font-size: 0.55rem; letter-spacing: 0.4em; color: var(--iris); opacity: 0.6; margin-bottom: 1rem; display: block; }
-        .project-title { font-family: 'Syncopate', sans-serif; font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 700; letter-spacing: 0.05em; background: linear-gradient(135deg, #6a5070 0%, #9070a0 40%, #b090a8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
-        .project-subtitle { font-size: 0.65rem; font-weight: 200; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(58,46,56,0.4); margin-top: 1rem; display: block; }
-        .roles-wrap { text-align: right; }
-        .roles-label { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(160,128,180,0.5); margin-bottom: 1rem; display: block; }
-        .role-chip { display: inline-block; font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; background: rgba(180,150,200,0.1); border: 1px solid rgba(180,150,200,0.25); color: rgba(100,70,110,0.7); padding: 0.3rem 0.8rem; margin: 0.2rem; border-radius: 2px; }
+.chaquetas-bg { background: linear-gradient(135deg, #f2eff5 0%, #f0eaf2 55%, #f5f0ee 100%); }
+.chaquetas-bg::before { content:''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse at 80% 20%, rgba(200,175,215,0.18) 0%, transparent 50%), radial-gradient(ellipse at 20% 80%, rgba(220,195,210,0.12) 0%, transparent 45%); }
 
-        /* ── GRIDS ── */
-        .grid-nacar { display: grid; grid-template-columns: 1.5fr 0.5fr; grid-template-rows: 1fr 1fr; gap: 0.75rem; height: 620px; position: relative; z-index: 2; }
-        .n-main { grid-row: 1/3; }
-        .grid-delmar { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0.75rem; height: 600px; position: relative; z-index: 2; }
-        .d-main { grid-row: 1/3; }
-        .grid-concurvas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; height: 560px; position: relative; z-index: 2; }
+/* ── PROJECT NUMBER DECORATIVO ── */
+.project-big-num {
+  position: absolute; right: 3rem; top: 4rem;
+  font-family: 'Syncopate', sans-serif;
+  font-size: clamp(6rem, 15vw, 14rem); font-weight: 700;
+  background: linear-gradient(135deg, rgba(176,144,192,0.08), rgba(200,168,210,0.04));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  line-height: 1; pointer-events: none; user-select: none;
+  letter-spacing: -0.05em;
+}
 
-        /* ── IMAGE SLOTS ── */
-        .img-slot { position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(200,175,215,0.12), rgba(192,210,224,0.1)); border: 1px solid rgba(180,150,200,0.2); }
-        .img-slot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .7s cubic-bezier(.25,.46,.45,.94); }
-        .img-slot:hover img { transform: scale(1.05); }
-        .slot-inner { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; color: rgba(100,80,110,0.35); }
-        .slot-icon { width: 40px; height: 40px; border: 1px solid rgba(160,130,180,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .slot-label { font-size: 0.55rem; letter-spacing: 0.25em; text-transform: uppercase; text-align: center; line-height: 1.8; }
+/* ── PROJECT HEADER ── */
+.project-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 4rem; position: relative; z-index: 2;
+}
+.project-num {
+  font-family: 'Syncopate', sans-serif; font-size: 0.52rem; letter-spacing: 0.4em;
+  color: var(--iris); opacity: 0.6; margin-bottom: 1rem; display: block;
+}
+.project-title {
+  font-family: 'Syncopate', sans-serif;
+  font-size: clamp(2.2rem, 5.5vw, 5rem); font-weight: 700; letter-spacing: 0.04em;
+  background: linear-gradient(135deg, #7a6088 0%, #a080b0 30%, #b898b0 55%, #9898a8 80%, #a08898 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  line-height: 1; animation: iridShift 5s ease infinite;
+}
+.project-subtitle {
+  font-size: 0.62rem; font-weight: 200; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(58,46,56,0.38);
+  margin-top: 1rem; display: block;
+}
+.roles-wrap { text-align: right; padding-top: 0.5rem; }
+.roles-label {
+  font-size: 0.52rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(160,128,180,0.5); margin-bottom: 1rem; display: block;
+}
+.role-chip {
+  display: inline-block; font-size: 0.52rem; letter-spacing: 0.15em;
+  text-transform: uppercase; background: rgba(176,144,192,0.08);
+  border: 1px solid rgba(176,144,192,0.22); color: rgba(100,70,110,0.65);
+  padding: 0.28rem 0.75rem; margin: 0.18rem; border-radius: 1px;
+  transition: all .3s;
+}
+.role-chip:hover { background: rgba(176,144,192,0.18); border-color: var(--iris); color: var(--iris-deep); }
 
-        /* ── DESC ── */
-        .project-desc { margin-top: 4rem; display: grid; grid-template-columns: 200px 1fr; gap: 4rem; align-items: start; position: relative; z-index: 2; }
-        .desc-label { font-size: 0.55rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--iris); opacity: 0.7; }
-        .irid-line { width: 100%; height: 1px; margin-top: 1rem; background: linear-gradient(to right, var(--iris), var(--rose-irid), var(--aqua-irid), transparent ); opacity: 0.5; }
-        .desc-text { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic; font-weight: 300; line-height: 1.9; color: rgba(58,46,56,0.65); }
+/* ── CARRUSEL DE PROYECTO ── */
+.project-carousel-wrap {
+  position: relative; z-index: 2;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+.project-carousel-track {
+  display: flex; gap: 8px;
+  width: max-content; cursor: grab;
+}
+.project-carousel-track.dragging { cursor: grabbing; }
+.project-carousel-track.auto-play { animation: projectSlide var(--dur, 30s) linear infinite; }
+.project-carousel-track.auto-play:hover { animation-play-state: paused; }
 
-        /* ── ABOUT (Updated to Light Theme) ── */
-        .about-section { padding: 10rem 3rem; position: relative; overflow: hidden; background: #f5f0ec; }
-        .about-card {
-            position: relative; z-index: 2;
-            background: rgba(255,255,255,0.4);
-            border: 1px solid rgba(180,150,200,0.2);
-            backdrop-filter: blur(30px);
-            padding: 5rem;
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 6rem; align-items: start;
-            border-radius: 4px;
-        }
-        .about-eyebrow { font-family: 'Syncopate', sans-serif; font-size: 0.55rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--iris); margin-bottom: 2rem; display: block; opacity: 0.7; }
-        .about-title { font-family: 'Syncopate', sans-serif; font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 700; line-height: 1.2; background: linear-gradient(135deg, var(--ink), var(--iris-deep)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 2.5rem; }
-        .about-text { font-size: 0.9rem; font-weight: 300; line-height: 2.2; color: var(--ink); opacity: 0.8; margin-bottom: 3rem; }
-        .skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-        .skill-tag { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; background: rgba(200,168,232,0.1); border: 1px solid rgba(200,168,232,0.2); color: var(--iris-deep); padding: 0.4rem 0.9rem; }
-        .contact-cta { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-style: italic; font-weight: 300; color: var(--ink); margin-bottom: 2.5rem; }
-        .contact-email { font-family: 'Syncopate', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--iris); padding-bottom: 0.5rem; }
-        .contact-note { margin-top: 2.5rem; font-size: 0.7rem; font-weight: 200; line-height: 2; color: rgba(58,46,56,0.5); }
+.project-carousel-item {
+  flex-shrink: 0;
+  height: var(--item-h, 520px);
+  width: var(--item-w, 380px);
+  overflow: hidden; position: relative;
+  border: 1px solid rgba(176,144,192,0.15);
+}
+.project-carousel-item img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .7s cubic-bezier(.25,.46,.45,.94), filter .5s;
+}
+/* Hover iridiscente (mismo efecto que antes) */
+.project-carousel-item::before {
+  content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: linear-gradient(125deg, transparent 30%, rgba(200,168,232,0.2) 45%, rgba(240,200,220,0.15) 55%, rgba(168,216,240,0.2) 65%, transparent 75%);
+  background-size: 250% 250%; background-position: 0% 0%;
+  opacity: 0; transition: opacity .5s, background-position .5s;
+}
+.project-carousel-item::after {
+  content: ''; position: absolute; z-index: 4; pointer-events: none;
+  width: 150%; height: 100%; top: 0; left: -100%;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.22) 50%, transparent 60%);
+  transition: left .6s cubic-bezier(.25,.46,.45,.94);
+}
+.project-carousel-item:hover::before { opacity: 1; background-position: 100% 100%; }
+.project-carousel-item:hover::after  { left: 100%; }
+.project-carousel-item:hover img     { transform: scale(1.04); filter: brightness(1.05) saturate(1.1); }
 
-        footer { padding: 2.5rem 3rem; border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; background: #fdfbf9; }
-        .footer-name { font-family: 'Syncopate', sans-serif; font-size: 0.6rem; letter-spacing: 0.3em; color: rgba(58,46,56,0.3); }
-        .footer-note { font-size: 0.55rem; letter-spacing: 0.2em; color: rgba(58,46,56,0.2); }
+.project-carousel-item .slot-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(to top, rgba(58,46,56,0.55) 0%, transparent 50%);
+  opacity: 0; transition: opacity .4s;
+  display: flex; align-items: flex-end; padding: 1.2rem;
+}
+.project-carousel-item:hover .slot-overlay { opacity: 1; }
+.slot-overlay-text {
+  font-size: 0.52rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: rgba(255,255,255,0.85); line-height: 1.8;
+}
 
-        /* ANIMATIONS */
-        .reveal { opacity: 0; transform: translateY(35px); transition: opacity .9s ease, transform .9s ease; }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes projectSlide {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 
-        @media (max-width: 768px) {
-            .about-card { grid-template-columns: 1fr; padding: 2.5rem; }
-            .nav-links { display: none; }
-        }
-    </style>
+/* ── IMAGE SLOTS CON HOVER IRIDISCENTE ── */
+.img-slot {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, rgba(200,175,215,0.1), rgba(192,210,224,0.08));
+  border: 1px solid rgba(176,144,192,0.15);
+}
+
+/* Capa de brillo iridiscente que aparece en hover */
+.img-slot::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: linear-gradient(125deg,
+    transparent 0%, transparent 30%,
+    rgba(200,168,232,0.18) 40%, rgba(240,200,220,0.15) 50%,
+    rgba(168,216,240,0.18) 60%, transparent 70%, transparent 100%
+  );
+  background-size: 250% 250%; background-position: 0% 0%;
+  opacity: 0; transition: opacity .5s, background-position .5s;
+}
+.img-slot:hover::before {
+  opacity: 1; background-position: 100% 100%;
+}
+
+/* Destello de luz en esquina */
+.img-slot::after {
+  content: '';
+  position: absolute; z-index: 4; pointer-events: none;
+  width: 150%; height: 100%; top: 0; left: -100%;
+  background: linear-gradient(105deg,
+    transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%
+  );
+  transition: left .6s cubic-bezier(.25,.46,.45,.94);
+}
+.img-slot:hover::after { left: 100%; }
+
+.img-slot img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform .7s cubic-bezier(.25,.46,.45,.94), filter .5s;
+}
+.img-slot:hover img { transform: scale(1.04); filter: brightness(1.05) saturate(1.1); }
+
+/* Overlay oscuro + título al hover */
+.img-slot .slot-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(to top, rgba(58,46,56,0.55) 0%, transparent 50%);
+  opacity: 0; transition: opacity .4s;
+  display: flex; align-items: flex-end; padding: 1.2rem;
+}
+.img-slot:hover .slot-overlay { opacity: 1; }
+.slot-overlay-text {
+  font-size: 0.55rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: rgba(255,255,255,0.85);
+  line-height: 1.8;
+}
+
+/* Placeholder cuando no hay imagen */
+.slot-inner {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 1rem; color: rgba(100,80,110,0.3);
+}
+.slot-icon {
+  width: 38px; height: 38px;
+  border: 1px solid rgba(160,130,180,0.2); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.slot-label { font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase; text-align: center; line-height: 1.9; }
+
+/* ── DESCRIPCIÓN ── */
+.project-desc {
+  margin-top: 3.5rem;
+  display: grid; grid-template-columns: 180px 1fr; gap: 4rem;
+  align-items: start; position: relative; z-index: 2;
+}
+.desc-label { font-size: 0.52rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--iris); opacity: 0.7; }
+.irid-line {
+  width: 100%; height: 1px; margin-top: 0.8rem;
+  background: linear-gradient(to right, var(--iris), var(--rose-irid), var(--aqua-irid), transparent);
+  opacity: 0.5;
+  animation: dividerShift 3s ease-in-out infinite;
+}
+.desc-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-style: italic; font-weight: 300;
+  line-height: 1.95; color: rgba(58,46,56,0.62);
+}
+
+/* ── ABOUT ── */
+.about-section {
+  padding: 9rem 3rem; position: relative; overflow: hidden;
+  background: linear-gradient(160deg, #f2eef8 0%, #ede8f5 50%, #f5f0ec 100%);
+}
+.about-section::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse at 50% 0%, rgba(200,168,232,0.15) 0%, transparent 55%),
+              radial-gradient(ellipse at 100% 100%, rgba(240,168,200,0.1) 0%, transparent 40%);
+}
+.about-card {
+  position: relative; z-index: 2;
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(176,144,192,0.2);
+  backdrop-filter: blur(20px); padding: 5rem;
+  display: grid; grid-template-columns: 0.75fr 1fr; gap: 5rem;
+  align-items: start;
+}
+.about-card::before {
+  content:''; position:absolute; inset:-1px; z-index:-1;
+  background: linear-gradient(135deg, rgba(200,168,232,0.4), rgba(240,168,200,0.3), rgba(168,216,240,0.4), rgba(200,168,232,0.4));
+  background-size: 300% 300%; animation: iridShift 4s ease infinite;
+}
+
+/* Foto Nicole */
+.about-photo-col { position: relative; }
+.about-photo-wrap {
+  position: relative; overflow: hidden;
+  border: 1px solid rgba(176,144,192,0.2);
+}
+.about-photo-wrap img {
+  width: 100%; height: auto;
+  display: block;
+  filter: sepia(0.1) contrast(1.05);
+  transition: transform .7s cubic-bezier(.25,.46,.45,.94);
+}
+.about-photo-wrap:hover img { transform: scale(1.03); }
+/* Brillo iridiscente sobre la foto */
+.about-photo-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(135deg,
+    rgba(200,168,232,0.08) 0%,
+    transparent 40%,
+    rgba(240,168,200,0.06) 70%,
+    transparent 100%
+  );
+}
+.about-text-col { padding-top: 0.5rem; }
+
+.about-eyebrow { font-family: 'Syncopate', sans-serif; font-size: 0.52rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--iris); margin-bottom: 2rem; display: block; opacity: 0.7; }
+.about-title {
+  font-family: 'Syncopate', sans-serif; font-size: clamp(1.4rem, 3vw, 2.3rem);
+  font-weight: 700; line-height: 1.25;
+  background: linear-gradient(135deg, var(--ink), var(--iris-deep));
+  background-size: 200% 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 2.5rem; animation: iridShift 5s ease infinite;
+}
+.about-text { font-size: 0.88rem; font-weight: 300; line-height: 2.3; color: rgba(58,46,56,0.78); margin-bottom: 3rem; }
+.skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skill-tag {
+  font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase;
+  background: rgba(200,168,232,0.08); border: 1px solid rgba(200,168,232,0.22);
+  color: var(--iris-deep); padding: 0.38rem 0.9rem;
+  transition: all .3s;
+}
+.skill-tag:hover { background: rgba(200,168,232,0.18); border-color: var(--iris); }
+
+.contact-eyebrow { font-family: 'Syncopate', sans-serif; font-size: 0.52rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--rose-irid); margin-bottom: 1.5rem; display: block; }
+.contact-cta { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-style: italic; font-weight: 300; color: var(--ink); margin-bottom: 2.5rem; line-height: 1.45; }
+.contact-email {
+  display: inline-block; font-family: 'Syncopate', sans-serif;
+  font-size: 0.65rem; letter-spacing: 0.15em; color: var(--ink);
+  text-decoration: none; border-bottom: 1px solid var(--iris);
+  padding-bottom: 0.4rem; transition: color .3s, border-color .3s;
+}
+.contact-email:hover { color: var(--iris-deep); border-color: var(--iris-deep); }
+.contact-note { margin-top: 2.5rem; font-size: 0.7rem; font-weight: 200; line-height: 2.1; color: rgba(58,46,56,0.45); }
+
+/* ── FOOTER ── */
+footer {
+  padding: 2.5rem 3rem; border-top: 1px solid rgba(176,144,192,0.12);
+  display: flex; justify-content: space-between; align-items: center;
+  background: #fdfbf9;
+}
+.footer-name { font-family: 'Syncopate', sans-serif; font-size: 0.58rem; letter-spacing: 0.3em; color: rgba(58,46,56,0.28); }
+.footer-note { font-size: 0.52rem; letter-spacing: 0.2em; color: rgba(58,46,56,0.18); }
+
+/* ── ANIMACIONES ── */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity .9s ease, transform .9s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .22s; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(25px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 1.4rem 1.5rem; }
+  .nav-links { display: none; }
+  .hero { padding: 0 1.5rem 6rem; }
+  .project-carousel-wrap { --item-h: 280px !important; --item-w: 240px !important; }
+  .project-section { padding: 5rem 1.5rem 6rem; }
+  .project-big-num { display: none; }
+  .project-header { flex-direction: column; gap: 2rem; }
+  .roles-wrap { text-align: left; }
+  .grid-nacar, .grid-delmar { grid-template-columns: 1fr; height: auto; }
+  .n-main, .d-main { grid-row: auto; height: 300px; }
+  .grid-nacar .img-slot:not(.n-main), .grid-delmar .img-slot:not(.d-main) { height: 200px; }
+  .grid-concurvas { grid-template-columns: 1fr; height: auto; }
+  .grid-concurvas .img-slot { height: 260px; }
+  .project-desc { grid-template-columns: 1fr; gap: 1rem; }
+  .about-card { grid-template-columns: 1fr; gap: 3rem; padding: 2.5rem; }
+  .about-photo-wrap img { width: 100%; height: auto; }
+}
+</style>
 </head>
 <body>
 
 <canvas id="irid-canvas"></canvas>
-<div class="cursor" id="cursor"></div><div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
+<!-- NAV -->
 <nav>
   <a href="#" class="nav-name">Nicole Reyes</a>
   <ul class="nav-links">
@@ -290,8 +508,12 @@
   </ul>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-orb orb-1"></div><div class="hero-orb orb-2"></div><div class="hero-orb orb-3"></div>
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+  <div class="hero-orb orb-3"></div>
+
   <div class="hero-content">
     <span class="hero-label">Portafolio</span>
     <h1 class="hero-name">Nicole<br>Reyes</h1>
@@ -300,13 +522,19 @@
       Estilismo &nbsp;·&nbsp; Diseño Visual &nbsp;·&nbsp; Desfiles
     </p>
   </div>
-  <div class="hero-scroll"><div class="scroll-line"></div>Scroll</div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
 </section>
 
+<!-- DIVIDER -->
 <div class="glass-divider"><div class="glass-divider-inner"><div class="divider-line"></div></div></div>
 
 <!-- ── NÁCAR ── -->
 <section class="project-section nacar-bg" id="nacar">
+  <div class="project-big-num">01</div>
   <div class="project-header reveal">
     <div>
       <span class="project-num">01 / 03</span>
@@ -321,45 +549,35 @@
       <span class="role-chip">Coordinación Desfile</span>
     </div>
   </div>
- <!-- SECCIÓN NÁCAR - CORRECCIÓN FINAL PNG -->
-    <div class="grid-nacar reveal">
-      <!-- Foto Grande -->
-      <div class="img-slot n-main">
-        <img src="looks nacar.png" alt="Colección Nácar - Modelos">
-      </div>
 
-      <!-- Foto Pequeña Arriba -->
-      <div class="img-slot n-2">
-        <img src="principal nacar.png" alt="Presentación Nácar">
-        <div class="slot-inner">
-          <div class="slot-label">Lanzamiento <br> Digital</div>
-        </div>
-      </div>
-
-      <!-- Foto Pequeña Abajo (La que ya funcionaba) -->
-      <div class="img-slot n-3">
-        <img src="decoracion nacar.jpeg" alt="Exposición Nácar">
-        <div class="slot-inner">
-          <div class="slot-label">Muestra <br> Editorial</div>
-        </div>
-      </div>
+  <div class="project-carousel-wrap reveal reveal-delay-1" style="--item-h:520px; --item-w:420px;">
+    <div class="project-carousel-track auto-play" style="--dur:24s;">
+      <div class="project-carousel-item"><img src="looks nacar.png" alt="Looks Nácar"><div class="slot-overlay"><span class="slot-overlay-text">Looks · Estilismo</span></div></div>
+      <div class="project-carousel-item"><img src="principal nacar.png" alt="Desfile Nácar"><div class="slot-overlay"><span class="slot-overlay-text">Desfile</span></div></div>
+      <div class="project-carousel-item"><img src="decoracion nacar.jpeg" alt="Decoración Nácar"><div class="slot-overlay"><span class="slot-overlay-text">Decoración Espacio</span></div></div>
+      <!-- duplicado para loop -->
+      <div class="project-carousel-item"><img src="looks nacar.png" alt="Looks Nácar"><div class="slot-overlay"><span class="slot-overlay-text">Looks · Estilismo</span></div></div>
+      <div class="project-carousel-item"><img src="principal nacar.png" alt="Desfile Nácar"><div class="slot-overlay"><span class="slot-overlay-text">Desfile</span></div></div>
+      <div class="project-carousel-item"><img src="decoracion nacar.jpeg" alt="Decoración Nácar"><div class="slot-overlay"><span class="slot-overlay-text">Decoración Espacio</span></div></div>
     </div>
+  </div>
 
-      
-  
-
-  <div class="project-desc reveal">
-    <div class="desc-label-wrap"><span class="desc-label">Sobre el proyecto</span><div class="irid-line"></div></div>
-    <p class="desc-text">Colección inspirada en la iridiscencia del nácar y lo marino. Dirección creativa integral: selección de telas, confección de prendas, moodboards de tendencia y decoración del espacio.</p>
+  <div class="project-desc reveal reveal-delay-2">
+    <div><span class="desc-label">Sobre el proyecto</span><div class="irid-line"></div></div>
+    <p class="desc-text">Colección inspirada en la iridiscencia del nácar y lo marino, presentada en el MAMM de Medellín ante aproximadamente 65 personas. Dirección creativa integral: selección de telas, confección de prendas, moodboards de tendencia, invitaciones digitales, decoración del espacio y coordinación logística del desfile.</p>
   </div>
 </section>
 
+<!-- DIVIDER -->
+<div class="glass-divider"><div class="glass-divider-inner"><div class="divider-line" style="background: linear-gradient(to right, transparent, rgba(168,216,240,0.4), rgba(232,216,176,0.35), transparent);"></div></div></div>
+
 <!-- ── DEL MAR ── -->
 <section class="project-section delmar-bg" id="delmar">
+  <div class="project-big-num">02</div>
   <div class="project-header reveal">
     <div>
       <span class="project-num">02 / 03</span>
-      <h2 class="project-title" style="background: linear-gradient(135deg, #6a8090, #a8d8f0); -webkit-background-clip: text; background-clip: text;">Del Mar</h2>
+      <h2 class="project-title" style="background: linear-gradient(135deg, #607880, #8ab0c0, #b0c888); background-size:200% 200%; -webkit-background-clip:text; background-clip:text; animation: iridShift 5s ease infinite;">Del Mar</h2>
       <span class="project-subtitle">Colección · Verano Tropical</span>
     </div>
     <div class="roles-wrap">
@@ -367,112 +585,103 @@
       <span class="role-chip">Selección de Telas</span>
       <span class="role-chip">Estilismo</span>
       <span class="role-chip">Diseño de Espacio</span>
+      <span class="role-chip">Coordinación Desfile</span>
     </div>
   </div>
-<!-- SECCIÓN DEL MAR -->
-    <div class="grid-delmar reveal">
-      <!-- Foto Grande (Looks) -->
-      <div class="img-slot d-main">
-        <img src="looks del mar.jpeg" alt="Colección Del Mar - Estilismo">
-      </div>
 
-      <!-- Foto Pequeña 1 (Decoración con nombre 1) -->
-      <div class="img-slot d-2">
-        <img src="decoracion del mar 1.png" alt="Detalle Del Mar 1">
-        <div class="slot-inner">
-          <div class="slot-label">Inspiración <br> Marina</div>
-        </div>
-      </div>
-
-      <!-- Foto Pequeña 2 (Decoración general) -->
-      <div class="img-slot d-3">
-        <img src="decoracion del mar.jpeg" alt="Detalle Del Mar 2">
-        <div class="slot-inner">
-          <div class="slot-label">Texturas <br> y Color</div>
-        </div>
-      </div>
+  <div class="project-carousel-wrap reveal reveal-delay-1" style="--item-h:520px; --item-w:420px;">
+    <div class="project-carousel-track auto-play" style="--dur:26s;">
+      <div class="project-carousel-item"><img src="looks del mar.jpeg" alt="Looks Del Mar"><div class="slot-overlay"><span class="slot-overlay-text">Looks · Estilismo</span></div></div>
+      <div class="project-carousel-item"><img src="decoracion del mar 1.png" alt="Decoración Del Mar"><div class="slot-overlay"><span class="slot-overlay-text">Decoración Espacio</span></div></div>
+      <div class="project-carousel-item"><img src="decoracion del mar.jpeg" alt="Detalle Del Mar"><div class="slot-overlay"><span class="slot-overlay-text">Dirección Visual</span></div></div>
+      <!-- duplicado para loop -->
+      <div class="project-carousel-item"><img src="looks del mar.jpeg" alt="Looks Del Mar"><div class="slot-overlay"><span class="slot-overlay-text">Looks · Estilismo</span></div></div>
+      <div class="project-carousel-item"><img src="decoracion del mar 1.png" alt="Decoración Del Mar"><div class="slot-overlay"><span class="slot-overlay-text">Decoración Espacio</span></div></div>
+      <div class="project-carousel-item"><img src="decoracion del mar.jpeg" alt="Detalle Del Mar"><div class="slot-overlay"><span class="slot-overlay-text">Dirección Visual</span></div></div>
     </div>
- <div class="project-desc reveal">
-    <div class="desc-label-wrap"><span class="desc-label">Sobre el proyecto</span><div class="irid-line"></div></div>
-    <p class="desc-text">Colección de verano con paleta tropical: azules, coral y amarillo sol. Segundo desfile 
-        de temporada — desde la selección de telas y estilismo de los looks hasta el diseño 
-        de la ambientación completa del espacio y la coordinación con equipos de confección y logística.</p>
   </div>
 
+  <div class="project-desc reveal reveal-delay-2">
+    <div><span class="desc-label">Sobre el proyecto</span><div class="irid-line" style="background: linear-gradient(to right, #8ab0c0, #c8d890, transparent); opacity:0.5;"></div></div>
+    <p class="desc-text">Colección de verano con paleta tropical: azules, coral y amarillo sol. Segundo desfile del año en el MAMM de Medellín, con asistencia de 60 a 70 personas. Desde la selección de telas y estilismo de los looks hasta el diseño de la ambientación completa del espacio y la coordinación con equipos de confección y logística.</p>
+  </div>
 </section>
+
+<!-- DIVIDER -->
+<div class="glass-divider"><div class="glass-divider-inner"><div class="divider-line" style="background: linear-gradient(to right, transparent, rgba(200,168,232,0.4), rgba(240,168,200,0.35), transparent);"></div></div></div>
 
 <!-- ── CONCURVAS ── -->
 <section class="project-section chaquetas-bg" id="concurvas">
+  <div class="project-big-num">03</div>
   <div class="project-header reveal">
     <div>
       <span class="project-num">03 / 03</span>
-      <h2 class="project-title" style="background: linear-gradient(135deg, #906a80, #f0a8c8); -webkit-background-clip: text; background-clip: text;">Concurvas</h2>
-      <span class="project-subtitle">Desarrollo de Producto · Diseño de Prendas</span>
+      <h2 class="project-title" style="background: linear-gradient(135deg, #806080, #c090b8, #e0b0c8); background-size:200% 200%; -webkit-background-clip:text; background-clip:text; animation: iridShift 5s ease infinite;">Concurvas</h2>
+      <span class="project-subtitle">Desarrollo de Muestras · Producción Textil</span>
     </div>
     <div class="roles-wrap">
       <span class="roles-label">Rol en el proyecto</span>
-      <span class="role-chip">Diseño de Prendas</span>
-      <span class="role-chip">Fichas Técnicas</span>
       <span class="role-chip">Desarrollo de Muestras</span>
+      <span class="role-chip">Selección de Telas</span>
+      <span class="role-chip">Fichas Técnicas</span>
+      <span class="role-chip">Coord. Satélites</span>
+      <span class="role-chip">Contenido Digital</span>
     </div>
   </div>
 
- <!-- SECCIÓN CONCURVAS -->
-    <div class="grid-concurvas reveal">
-      <!-- Foto Grande -->
-      <div class="img-slot c-main">
-        <img src="concurvas 1.png" alt="Proyecto Concurvas - Principal">
-      </div>
-
-      <!-- Foto Pequeña 1 -->
-      <div class="img-slot c-2">
-        <img src="concurvas 2.png" alt="Proyecto Concurvas - Detalle 1">
-        <div class="slot-inner">
-          <div class="slot-label">UX / UI <br> Design</div>
-        </div>
-      </div>
-
-      <!-- Foto Pequeña 2 -->
-      <div class="img-slot c-3">
-        <img src="concurvas 3.png" alt="Proyecto Concurvas - Detalle 2">
-        <div class="slot-inner">
-          <div class="slot-label">Digital <br> Experience</div>
-        </div>
-      </div>
+  <div class="project-carousel-wrap reveal reveal-delay-1" style="--item-h:520px; --item-w:420px;">
+    <div class="project-carousel-track auto-play" style="--dur:22s;">
+      <div class="project-carousel-item"><img src="concurvas 1.png" alt="Concurvas"><div class="slot-overlay"><span class="slot-overlay-text">Diseño de Prenda</span></div></div>
+      <div class="project-carousel-item"><img src="concurvas 2.png" alt="Concurvas Detalle"><div class="slot-overlay"><span class="slot-overlay-text">Desarrollo de Muestra</span></div></div>
+      <div class="project-carousel-item"><img src="concurvas 3.png" alt="Concurvas Ficha"><div class="slot-overlay"><span class="slot-overlay-text">Ficha Técnica</span></div></div>
+      <!-- duplicado para loop -->
+      <div class="project-carousel-item"><img src="concurvas 1.png" alt="Concurvas"><div class="slot-overlay"><span class="slot-overlay-text">Diseño de Prenda</span></div></div>
+      <div class="project-carousel-item"><img src="concurvas 2.png" alt="Concurvas Detalle"><div class="slot-overlay"><span class="slot-overlay-text">Desarrollo de Muestra</span></div></div>
+      <div class="project-carousel-item"><img src="concurvas 3.png" alt="Concurvas Ficha"><div class="slot-overlay"><span class="slot-overlay-text">Ficha Técnica</span></div></div>
     </div>
- <div class="project-desc reveal">
-    <div class="desc-label-wrap"><span class="desc-label">Sobre el proyecto</span><div class="irid-line"></div></div>
-    <p class="desc-text">Desarrollo integral de colección de chaquetería: diseño de prendas, creación de muestras 
-        físicas, fichas técnicas y dirección visual de campaña fotográfica. Trabajo coordinado 
-        con producción y confección desde boceto hasta producto final.</p>
   </div>
 
+  <div class="project-desc reveal reveal-delay-2">
+    <div><span class="desc-label">Sobre el proyecto</span><div class="irid-line" style="background: linear-gradient(to right, var(--rose-irid), var(--iris), transparent); opacity:0.5;"></div></div>
+    <p class="desc-text">Empresa de moda rápida con ciclos de desarrollo semanales. El rol incluía el desarrollo y corte de muestras para confección, selección de telas y alistamiento de materiales para talleres satélite, coordinación directa con los satélites de producción, elaboración de fichas técnicas por referencia y apoyo en las sesiones fotográficas para redes sociales.</p>
+  </div>
 </section>
+
+<!-- DIVIDER -->
+<div class="glass-divider"><div class="glass-divider-inner"><div class="divider-line"></div></div></div>
 
 <!-- ABOUT -->
 <section class="about-section" id="sobre-mi">
   <div class="about-card reveal">
-    <div>
+    <!-- Foto -->
+    <div class="about-photo-col">
+      <div class="about-photo-wrap">
+        <img src="nicole-photo.png" alt="Nicole Reyes">
+        <div class="about-photo-overlay"></div>
+      </div>
+    </div>
+    <!-- Texto -->
+    <div class="about-text-col">
       <span class="about-eyebrow">Sobre mí</span>
       <h2 class="about-title">Intuitiva y auténtica</h2>
       <p class="about-text">
         Soy una diseñadora guiada por la intuición, la estética y las emociones. Desde siempre me ha llamado más la atención lo que una prenda transmite que la prenda en sí: cómo hace sentir a alguien, cómo puede cambiar su energía o su forma de habitar un espacio.<br><br>
-        Mi forma de ver la moda nace de observar a las personas reales. Me interesa lo que pasa en lo cotidiano, en lo simple, en lo que no está pensado para verse perfecto pero igual se siente auténtico. Por eso, no conecto con una moda lejana o inalcanzable, sino con una que se siente cercana, honesta y coherente con quien la usa.
+        Mi forma de ver la moda nace de observar a las personas reales. Me interesa lo que pasa en lo cotidiano, en lo simple, en lo que no está pensado para verse perfecto pero igual se siente auténtico.
       </p>
       <div class="skills-grid">
         <span class="skill-tag">Dirección Creativa</span>
         <span class="skill-tag">Desarrollo Textil</span>
         <span class="skill-tag">Estilismo</span>
         <span class="skill-tag">Diseño Visual</span>
+        <span class="skill-tag">Cartas de Color</span>
+        <span class="skill-tag">Coord. de Desfiles</span>
       </div>
-    </div>
-    <div>
-      <span class="contact-eyebrow">Contacto</span>
-      <p class="contact-cta">¿Tienes un proyecto en mente?</p>
-      <a href="mailto:snicolereyes24@gmail.com" class="contact-email">snicolereyes24@gmail.com</a>
-      <p class="contact-note">
-        Escríbeme para conversar sobre posibles colaboraciones o para conocer más sobre mi.
-      </p>
+      <div style="margin-top: 3rem;">
+        <span class="contact-eyebrow">Contacto</span>
+        <p class="contact-cta">¿Tienes un proyecto en mente?</p>
+        <a href="mailto:snicolereyes24@gmail.com" class="contact-email">snicolereyes24@gmail.com</a>
+        <p class="contact-note">Escríbeme para conversar sobre posibles colaboraciones o para conocer más sobre mí.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -483,41 +692,74 @@
 </footer>
 
 <script>
-// (El resto del script de canvas y cursor se mantiene igual)
-const canvas = document.getElementById('irid-canvas');const ctx = canvas.getContext('2d');let W, H, t = 0;
+// ── CANVAS IRIDISCENTE ──
+const canvas = document.getElementById('irid-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, t = 0;
 function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 resize(); window.addEventListener('resize', resize);
+
 const blobs = [
-  { x: 0.7, y: 0.2, r: 0.4, c1: [200,168,232], c2: [240,168,200], speed: 0.0008 },
-  { x: 0.2, y: 0.7, r: 0.35, c1: [168,216,240], c2: [168,240,210], speed: 0.0012 },
-  { x: 0.5, y: 0.5, r: 0.25, c1: [240,216,168], c2: [200,168,232], speed: 0.0006 },
+  { x:0.75, y:0.15, r:0.42, c1:[200,168,220], c2:[240,180,210], speed:0.0007 },
+  { x:0.15, y:0.72, r:0.38, c1:[168,210,232], c2:[180,232,210], speed:0.001  },
+  { x:0.52, y:0.48, r:0.28, c1:[232,210,168], c2:[210,168,228], speed:0.0005 },
+  { x:0.88, y:0.78, r:0.32, c1:[220,168,200], c2:[168,200,232], speed:0.0009 },
 ];
+
 function drawFrame() {
-  ctx.clearRect(0, 0, W, H); t += 1;
-  blobs.forEach((b, i) => {
-    const ox = Math.sin(t * b.speed * 1000 + i * 1.5) * 0.08;
-    const oy = Math.cos(t * b.speed * 1000 + i * 2.1) * 0.06;
-    const cx = (b.x + ox) * W; const cy = (b.y + oy) * H;
-    const r = b.r * Math.min(W, H);
-    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-    const alpha = 0.12;
-    grad.addColorStop(0, `rgba(${b.c1.join(',')},${alpha})`);
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  ctx.clearRect(0,0,W,H); t++;
+  blobs.forEach((b,i) => {
+    const ox = Math.sin(t * b.speed * 1000 + i * 1.5) * 0.09;
+    const oy = Math.cos(t * b.speed * 1000 + i * 2.2) * 0.07;
+    const cx = (b.x + ox) * W, cy = (b.y + oy) * H;
+    const r  = b.r * Math.min(W,H);
+    const a  = 0.1 + Math.sin(t * b.speed * 600 + i) * 0.04;
+    const g  = ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+    g.addColorStop(0, `rgba(${b.c1},${a})`);
+    g.addColorStop(0.5, `rgba(${b.c2},${a*0.5})`);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
   });
   requestAnimationFrame(drawFrame);
 }
 drawFrame();
 
-const cursor = document.getElementById('cursor'); const ring = document.getElementById('cursorRing');
-let mx = 0, my = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
-function animRing() { rx += (mx - rx) * 0.1; ry += (my - ry) * 0.1; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animRing); }
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+});
+function animRing() {
+  rx += (mx-rx)*0.1; ry += (my-ry)*0.1;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
 animRing();
 
-const reveals = document.querySelectorAll('.reveal');
-const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
-reveals.forEach(el => obs.observe(el));
+const interactives = document.querySelectorAll('a, .img-slot, .role-chip, .skill-tag, .hero-preview-item');
+interactives.forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('hovering'); ring.classList.add('hovering'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); ring.classList.remove('hovering'); });
+});
+
+// ── SCROLL REVEAL ──
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── SMOOTH NAV ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior:'smooth' });
+  });
+});
 </script>
 </body>
 </html>
